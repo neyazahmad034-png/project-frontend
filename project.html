@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Task Master</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container {
+            background-color: white;
+            width: 350px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        #taskInput {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #addBtn {
+            padding: 10px 15px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #addBtn:hover {
+            background-color: #218838;
+        }
+
+        #taskList {
+            list-style-type: none; /* List ke aage ke dots hatane ke liye */
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        /* Naye task ka design */
+        li {
+            background-color: #e9ecef;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+
+        li:hover {
+            background-color: #ffcccc; /* Hover karne par delete jaisa feel aaye */
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>📝 Mera To-Do List</h2>
+        
+        <!-- Input aur Button -->
+        <input type="text" id="taskInput" placeholder="Naya task likho...">
+        <button id="addBtn">Add</button>
+
+        <!-- Ye wo khali list hai jisme hum JS se naye items bhejenge -->
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        
+
+            // 1. SELECTION (Pakadna)
+let inputBox = document.getElementById("taskInput");
+let addButton = document.getElementById("addBtn");
+let ulList = document.getElementById("taskList");
+
+// --- JADOO 1: PAGE LOAD HOTE HI DIARY CHECK KARO ---
+function diarySePadho() {
+    let puranaData = localStorage.getItem("meraKhatta"); // Diary me check kiya
+    
+    if (puranaData) { // Agar diary me kuch mila
+        ulList.innerHTML = puranaData; // List me purana data daal diya
+        
+        // Purane tasks par delete wala bouncer wapas bithana padega
+        let saareItems = ulList.querySelectorAll("li");
+        saareItems.forEach(function(item) {
+            item.addEventListener("click", function() {
+                item.remove();
+                diaryMeSaveKaro(); // Delete hone par diary update karo
+            });
+        });
+    }
+}
+
+// --- JADOO 2: DIARY ME SAVE KARNE WALA FUNCTION ---
+function diaryMeSaveKaro() {
+    // Poori ki poori list (ul) ka HTML diary me save kar do
+    localStorage.setItem("meraKhatta", ulList.innerHTML);
+}
+
+
+// 2. MAIN LOGIC: Button par click ka wait karna
+addButton.addEventListener("click", function() {
+    let nayaTaskText = inputBox.value; 
+
+    if (nayaTaskText === "") {
+        alert("Pehle koi task toh likho bhai!");
+        return; 
+    }
+
+    // Naya <li> tag banana
+    let nayaLi = document.createElement("li");
+    nayaLi.innerText = nayaTaskText; 
+
+    // Naye task par delete wala bouncer bithana
+    nayaLi.addEventListener("click", function() {
+        nayaLi.remove(); 
+        diaryMeSaveKaro(); // Delete hone par diary update karo
+    });
+
+    // Screen par dikhana aur input khali karna
+    ulList.appendChild(nayaLi);
+    inputBox.value = ""; 
+
+    // --- JADOO 3: NAYA TASK ADD HOTE HI DIARY ME SAVE KARO ---
+    diaryMeSaveKaro(); 
+});
+
+// Shuruwat me ek baar check karte hain ki diary me kuch hai ya nahi
+diarySePadho();
+
+    </script>
+
+</body>
+</html>
